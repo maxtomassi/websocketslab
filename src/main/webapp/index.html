@@ -1,0 +1,77 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+</head>
+
+<body>
+<meta charset="utf-8">
+<title>Web Socket JavaScript Echo Client</title>
+<script language="javascript" type="text/javascript">
+    var wsUri = getRootUri() + "/toodoo/hello";
+    var websocket;
+
+    function getRootUri() {
+        return "ws://" + (document.location.hostname == "" ? "localhost" : document.location.hostname) + ":" +
+        (document.location.port == "" ? "8080" : document.location.port);
+    }
+
+    function init() {
+        output = document.getElementById("output");
+        connectWebsocket();
+    }
+
+    function connectWebsocket() {
+
+        websocket = new WebSocket(wsUri);
+        websocket.onopen = function (evt) {
+        onOpen(evt)
+        };
+        websocket.onmessage = function (evt) {
+        onMessage(evt)
+        };
+        websocket.onerror = function (evt) {
+        onError(evt)
+        };
+
+    }
+
+    function onOpen(evt) {
+        writeToScreen("CONNECTED");
+    }
+
+    function onMessage(evt) {
+        writeToScreen("RECEIVED: " + evt.data);
+    }
+
+    function onError(evt) {
+        writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
+    }
+
+    function doSend() {
+        var message = textID.value;
+        writeToScreen("SENT: " + message);
+        websocket.send(message);
+    }
+
+    function writeToScreen(message) {
+        var pre = document.createElement("p");
+        pre.style.wordWrap = "break-word";
+        pre.innerHTML = message;
+        //alert(output);
+        output.appendChild(pre);
+    }
+
+    window.addEventListener("load", init, false);
+
+</script>
+
+<h2 style="text-align: center;">Web Socket Simple Chat</h2>
+<div style="text-align: center;">
+    <form action="">
+        <input onclick="doSend()" value="Press me" type="button">
+        <input id="textID" name="message" value="Hello Web Sockets !" type="text"><br>
+    </form>
+</div>
+<div id="output"></div>
+</body>
+</html>
